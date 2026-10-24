@@ -1,6 +1,6 @@
 {
-  "name": "風景印めぐり 広島",
-  "short_name": "風景印めぐり",
+  "name": "収集図鑑",
+  "short_name": "収集図鑑",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

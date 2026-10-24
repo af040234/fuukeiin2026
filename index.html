@@ -3,18 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>風景印めぐり 広島</title>
+<title>収集図鑑</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff7a00">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="風景印めぐり">
+<meta name="apple-mobile-web-app-title" content="収集図鑑">
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#eaf7ff;--card:#fff;--tx:#10324a;--sub:#5b7f99;--ac:#ff7a00;--ok:#0a9bf5;--okbg:#d8f0ff;--line:#bfe6fb;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e2433;--card:#16344a;--tx:#e8f6ff;--sub:#8fb8d3;--ac:#ff9a33;--ok:#45b8ff;--okbg:#15405c;--line:#27526f;color-scheme:dark}}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#eaf7ff;--card:#fff;--tx:#10324a;--sub:#5b7f99;--ac:#ff7a00;--acd:#cc6200;--ok:#0a9bf5;--okbg:#d8f0ff;--line:#bfe6fb;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e2433;--card:#16344a;--tx:#e8f6ff;--sub:#8fb8d3;--ac:#ff9a33;--acd:#c25e00;--ok:#45b8ff;--okbg:#15405c;--line:#27526f;color-scheme:dark}}
+:root[data-mode="m"]{--bg:#eef3fa;--tx:#14284b;--sub:#5f7396;--ac:#1f3a6e;--acd:#142a52;--ok:#0f9484;--okbg:#dff5f0;--line:#cfdcee}
+@media (prefers-color-scheme:dark){:root[data-mode="m"]:not([data-theme="light"]){--bg:#101a33;--card:#1a2a4d;--tx:#eaf2ff;--sub:#9fb4d6;--ac:#3d5fb0;--acd:#2a4580;--ok:#3fd6c0;--okbg:#12403a;--line:#2c4170;--btxt:#0d2a2a}}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0 auto;background-color:var(--bg);color:var(--tx);font-family:Meiryo,"メイリオ","Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;padding:12px;max-width:560px}
-h1{font-size:22px;margin:4px 0 8px;padding:16px;border-radius:22px;color:#fff;text-align:center;background:#ff7a00;text-shadow:0 2px 0 rgba(0,0,0,.15);box-shadow:0 4px 0 #cc6200}
+h1{font-size:22px;margin:4px 0 8px;padding:16px;border-radius:22px;color:#fff;text-align:center;background:var(--ac);text-shadow:0 2px 0 rgba(0,0,0,.15);box-shadow:0 4px 0 var(--acd)}
 .note{font-size:12px;color:var(--sub)}
 .prog{background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:12px;margin:10px 0}
 .prog span#cnt{font-weight:700;font-size:16px}
@@ -28,25 +30,31 @@ select:focus,input:focus{outline:none;border-color:var(--ac)}
 .sub{font-size:12px;color:var(--sub);margin-top:2px}
 .row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
 button{font-family:inherit;font-size:15px;padding:10px 18px;border-radius:999px;border:2px solid var(--ac);background:transparent;color:var(--ac);font-weight:700}
-.done button{background:var(--ok);border-color:var(--ok);color:#fff}
+.done button{background:var(--ok);border-color:var(--ok);color:var(--btxt,#fff)}
 .hl{outline:3px solid var(--ac)}
 details summary{cursor:pointer}
+.tabs{display:flex;gap:8px;margin:8px 0}
+.tabs button{flex:1;padding:12px 8px}
+.tabs button.on{background:var(--ac);color:#fff}
+.tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--sub);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.item.paused{opacity:.75}
 </style>
 </head>
 <body>
-<h1>📮 風景印めぐり 広島 🍁</h1>
-<div class="note">試作版:現在340局を登録しています(順次追加中)。</div>
+<h1 id="ttl"></h1>
+<div class="tabs"><button id="tf" onclick="setMode('f')">風景印</button><button id="tm" onclick="setMode('m')">マンホールカード</button></div>
+<div class="note" id="info"></div>
 <div class="prog"><span id="cnt"></span><div class="bar"><i id="bar"></i></div></div>
-<input id="q" type="search" placeholder="局名で検索">
+<input id="q" type="search">
 <select id="flt"></select>
-<select id="st"><option value="">すべて</option><option value="n">未訪問のみ</option><option value="y">訪問済みのみ</option></select>
+<select id="st"><option value="">すべて</option><option value="n">未取得のみ</option><option value="y">取得済みのみ</option></select>
 <div id="list"></div>
 <details class="prog"><summary><b>バックアップ</b></summary>
-<p class="note">機種変更やブラウザのデータ削除に備えて、記録を文字として控えておけます。</p>
+<p class="note">機種変更やブラウザのデータ削除に備えて、記録(風景印・マンホールカードの両方)を文字として控えておけます。</p>
 <textarea id="bk" rows="4" style="width:100%;box-sizing:border-box;font-size:14px"></textarea>
 <div class="row"><button onclick="bkOut()">記録を書き出す</button><button onclick="bkIn()">貼り付けた記録を読み込む</button></div>
 <div class="note" id="bkm"></div></details>
-<p class="note">データ出典:日本郵便「風景印」ページ。営業時間・押印可否は事前に窓口へご確認ください(窓口押印は平日9:00〜17:00の局が多いです)。</p>
+<p class="note" id="src"></p>
 <script>
 var S=[
 {id:1,n:"広島県庁内郵便局",c:"広島市中区",a:"広島市中区基町10-52",la:34.396,lo:132.460,d:"もみじ・アビ・県庁舎・県章(2014年〜)"},
@@ -144,33 +152,76 @@ var S=[
 [[["木江郵便局","大崎郵便局","白水郵便局","木江沖浦郵便局"],318,"豊田郡大崎上島町"],[["甲山郵便局","吉川郵便局","津久志郵便局","大見郵便局","三川郵便局","宇津戸郵便局","小国郵便局","東郵便局","西大田郵便局","津名郵便局","世羅大田郵便局"],322,"世羅郡世羅町"],[["小畠郵便局","油木郵便局","井関郵便局","神石郵便局","高蓋郵便局","新坂郵便局","豊松郵便局","永野郵便局","田頭郵便局","牧郵便局"],333,"神石郡神石高原町"]].forEach(function(g){g[0].forEach(function(n,i){S.push({id:g[1]+i,n:n,c:g[2],a:g[2]+"(住所は調査中)",la:0,lo:0,d:"図案の説明は今後追加します"})})});
 var INFO={"広島中央郵便局":["","原爆慰霊碑と原爆ドーム、広島城、もみじ(2012年10月〜)"],"広島胡町郵便局":["広島市中区胡町4-1","えびす・大黒と、縮景園の跨虹橋(1982年3月〜)"],"広島ＪＰビル郵便局":["","広島JPビルディングと、もみじ・折り鶴(2022年9月〜)"],"広島江波栄町郵便局":["広島市中区江波栄町1-7",""],"口田郵便局":["","中小田古墳群と三角縁神獣鏡、竹林、芸備線の気動車(2026年8月〜)"],"東郵便局":["世羅郡世羅町別迫829-5","男鹿山・女鹿山を背に、農園とすずらん(1996年10月〜)"],"志和堀郵便局":["東広島市志和町志和堀3506-2","虚空蔵山を背に、わら葺き家と松茸(1992年7月〜)"],"本郷郵便局":["三原市本郷南4-29-1","広島空港とジェット機(2001年1月〜)"],"西城郵便局":["庄原市西城町西城110-2","比婆山とブナ林、高山植物(1972年3月〜)"],"比和郵便局":["庄原市比和町比和991","吾妻山を背に、ぶなとイワカガミ(1983年10月〜)"],"帝釈郵便局":["庄原市東城町帝釈未渡2013","栄明寺と雌橋(1952年4月〜)"],"戸手郵便局":["福山市新市町戸手2060-5","素盞嗚神社と喧嘩御輿、芦田川周辺の風景(2000年3月〜)"],"向島郵便局":["尾道市向島町甲18-2","尾道の渡船ととんび(1992年10月〜)"]};
 S.forEach(function(s){var x=INFO[s.n];if(x){if(x[0])s.a=x[0];if(x[1])s.d=x[1]}});
-var K="fuke-hiroshima",V={};
-try{V=JSON.parse(localStorage.getItem(K)||"{}")}catch(e){}
-Object.keys(V).forEach(function(k){var m=String(V[k]).match(/^(\d+)\/(\d+)\/(\d+)$/);if(m)V[k]=m[1]+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[3]).slice(-2)});
-function setD(id,v){if(v){V[id]=v;save();render()}}
-function bkOut(){var t=document.getElementById("bk"),m=document.getElementById("bkm");t.value=JSON.stringify({v:1,visits:V});t.select();var ng="上の文字をコピーして保管してください。";try{navigator.clipboard.writeText(t.value).then(function(){m.textContent="コピーしました。メモ帳などに貼り付けて保管してください。"},function(){m.textContent=ng})}catch(e){m.textContent=ng}}
-function bkIn(){var m=document.getElementById("bkm");try{var o=JSON.parse(document.getElementById("bk").value),v=o&&o.visits;if(!v||typeof v!=="object")throw 0;var n=0;Object.keys(v).forEach(function(k){if(/^\d+$/.test(k)&&/^\d{4}-\d{2}-\d{2}$/.test(String(v[k]))){V[k]=v[k];n++}});save();render();m.textContent=n+"件を読み込みました。"}catch(e){m.textContent="読み込めませんでした。書き出した文字をそのまま貼り付けてください。"}}
-function save(){try{localStorage.setItem(K,JSON.stringify(V))}catch(e){}}
-var f=document.getElementById("flt"),cs=["すべての市町"];
-S.forEach(function(s){if(cs.indexOf(s.c)<0)cs.push(s.c)});
-f.innerHTML=cs.map(function(c,i){return '<option value="'+(i?c:"")+'">'+c+'</option>'}).join("");
-var q=document.getElementById("q"),st=document.getElementById("st");f.onchange=st.onchange=q.oninput=render;
-function pick(k){f.value=k;render();window.scrollTo(0,document.getElementById("list").offsetTop-60)}
-function toggle(id){if(V[id])delete V[id];else{var d=new Date();V[id]=d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}save();render()}
-function go(id){var e=document.getElementById("i"+id);if(e){e.scrollIntoView({behavior:"smooth",block:"center"});e.classList.add("hl");setTimeout(function(){e.classList.remove("hl")},1500)}}
+var M=[
+{id:1,n:"大州雨水貯留池",c:"広島市",k:"広島市 A001(第1弾)",a:"広島市南区南蟹屋2-3",t:"見学した人に配布(要申込)",p:0},
+{id:2,n:"芦田川浄化センター",c:"福山市",k:"広島県 流域下水道(第2弾)",a:"福山市箕沖町106",t:"平日9:00〜17:00 / 休日は要電話予約(084-954-2733)",p:0},
+{id:3,n:"東広島市観光案内所",c:"東広島市",k:"東広島市 A001(第3弾)",a:"東広島市西条本町12-3(JR西条駅2階)",t:"9:00〜18:00 / 年末年始休",p:0},
+{id:4,n:"うきしろロビー",c:"三原市",k:"三原市 A001(第4弾)",a:"三原市城町1-1-1(JR三原駅構内)",t:"9:00〜18:00 / 年末年始休",p:0},
+{id:5,n:"呉市入船山記念館",c:"呉市",k:"呉市 A001(第5弾)",a:"呉市幸町4-6",t:"9:00〜17:00 / 火曜(祝日は翌日)・年末年始休",p:0},
+{id:6,n:"街かど市民ギャラリー90",c:"呉市",k:"呉市 B001(第5弾)",a:"呉市中通3-3-17",t:"10:00〜11:30・13:00〜17:30 / 火曜・年末年始休",p:0},
+{id:7,n:"たけはら海の駅 1階売店",c:"竹原市",k:"竹原市 A001(第5弾)",a:"竹原市",t:"8:30〜19:00 / 第3火曜・12/31〜1/3休",p:0},
+{id:8,n:"道の駅 みはら神明の里",c:"三原市",k:"三原市 B001(第6弾)",a:"三原市糸崎4-21-1",t:"9:00〜18:00 / 第3火曜休",p:0},
+{id:9,n:"廿日市市中央市民センター",c:"廿日市市",k:"廿日市市(第7弾)",a:"廿日市市天神11-29",t:"9:00〜17:00 / 祝日・年末年始休",p:0},
+{id:10,n:"坂町町民センター",c:"安芸郡坂町",k:"坂町(第7弾)",a:"安芸郡坂町平成ヶ浜1-1-1",t:"平日8:30〜21:30・休日8:30〜17:00 / 月曜・祝日・年末年始休",p:0},
+{id:11,n:"東広島市豊栄支所 地域振興課",c:"東広島市",k:"東広島市 B001(第9弾)",a:"東広島市豊栄町鍛冶屋963-2",t:"平日8:30〜17:15 / 祝日・年末年始休(土日は7:30〜17:00・要問合せ)",p:0},
+{id:12,n:"道の駅たけはら 2階観光情報コーナー",c:"竹原市",k:"竹原市 B001(第10弾)",a:"竹原市本町1-1-1",t:"9:00〜17:00 / 第3水曜・年末年始休",p:0},
+{id:13,n:"道の駅 三矢の里あきたかた",c:"安芸高田市",k:"安芸高田市 A001(第12弾)",a:"安芸高田市吉田町山手1059-1",t:"10:00〜17:00 / 年末年始休",p:0},
+{id:14,n:"道の駅 北の関宿安芸高田",c:"安芸高田市",k:"安芸高田市 B001(第13弾)",a:"安芸高田市美土里町横田331-1",t:"9:00〜18:00 / 年末年始休",p:0},
+{id:15,n:"神楽門前湯治村「千両萬両」",c:"安芸高田市",k:"安芸高田市 C001(第14弾)",a:"安芸高田市美土里町本郷14627",t:"10:00〜17:00 / 毎月第3水曜と翌木曜休",p:0},
+{id:16,n:"福山観光案内所",c:"福山市",k:"福山市(第17弾)",a:"福山市三之丸町30-1(JR福山駅構内)",t:"9:00〜18:30",p:0},
+{id:17,n:"広島駅総合案内所",c:"広島市",k:"広島市 B001(第18弾)",a:"広島市南区松原町2-37(JR広島駅 新幹線口構内2階)",t:"6:00〜24:00 / 年中無休",p:0},
+{id:18,n:"広島市平和記念公園レストハウス",c:"広島市",k:"広島市 C001(第19弾)",a:"広島市中区中島町1-1",t:"8:30〜17:00(3〜11月は18:00まで) / 年中無休",p:0},
+{id:19,n:"広島港総合案内所",c:"広島市",k:"広島市 D001(第20弾)",a:"広島市南区宇品海岸1-13-26(広島港宇品旅客ターミナル1階)",t:"9:00〜16:00 / 年中無休",p:0},
+{id:20,n:"府中市観光協会",c:"府中市",k:"府中市(第21弾)",a:"府中市府中町559-2",t:"9:00〜17:30 / 年末年始休",p:0},
+{id:21,n:"広島駅南口地下広場案内所",c:"広島市",k:"広島市 E001(第22弾)",a:"広島市南区松原町9番地先",t:"9:00〜19:00 / 1/1休",p:0},
+{id:22,n:"広島市中央老人福祉センター",c:"広島市",k:"広島市 F001(第23弾)",a:"広島市中区西白島町24-36",t:"9:00〜17:00 / 火曜・祝日・8/6・年末年始休",p:0},
+{id:23,n:"広島市三篠公民館",c:"広島市",k:"広島市 G001(第24弾)",a:"広島市西区打越町10-23",t:"9:00〜17:00 / 火曜・祝日・8/6・年末年始休",p:0},
+{id:24,n:"熊野町観光案内所 筆の駅",c:"安芸郡熊野町",k:"熊野町(第24弾)",a:"安芸郡熊野町出来庭10-6-24",t:"10:00〜16:00 / 水曜休",p:1},
+{id:25,n:"道の駅 来夢とごうち",c:"山県郡安芸太田町",k:"安芸太田町 A001(第28弾)",a:"山県郡安芸太田町上殿632-2",t:"10:00〜18:00(12〜6月の平日は17:00まで) / 火曜・1/1休",p:0},
+{id:26,n:"東広島市(問合せ先)",c:"東広島市",k:"東広島市 C001(第29弾)",a:"東広島市西条栄町8-29",t:"配布場所はまだ未定です(問合せ先の住所)",p:1}
+];
+var KS={f:"fuke-hiroshima",m:"fuke-hiroshima-mh"},VS={f:{},m:{}},mode="f";
+try{if(localStorage.getItem("fuke-mode")==="m")mode="m"}catch(e){}
+["f","m"].forEach(function(x){try{VS[x]=JSON.parse(localStorage.getItem(KS[x])||"{}")}catch(e){}
+ Object.keys(VS[x]).forEach(function(k){var m=String(VS[x][k]).match(/^(\d+)\/(\d+)\/(\d+)$/);if(m)VS[x][k]=m[1]+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[3]).slice(-2)})});
+var T={f:{h:"収集図鑑",u:"局",ph:"局名で検索",b:"押印してきた",d:"押印日",i:"風景印:広島県内の局を登録しています(順次追加中)。",s:"データ出典:日本郵便「風景印」ページ。営業時間・押印可否は事前に窓口へご確認ください(窓口押印は平日9:00〜17:00の局が多いです)。"},
+ m:{h:"収集図鑑",u:"枚",ph:"配布場所・カード名で検索",b:"もらってきた",d:"入手日",i:"マンホールカード:広島県内の配布場所を登録しています。配布時間や在庫は変わることがあります。",s:"データ出典:下水道広報プラットホーム(GKP)および各自治体の公開情報。行く前に、公式の最新情報(配布時間・在庫)をご確認ください。"}};
+function D(){return mode==="m"?M:S}
+function V(){return VS[mode]}
+function save(){try{localStorage.setItem(KS[mode],JSON.stringify(VS[mode]))}catch(e){}}
+function saveAll(){["f","m"].forEach(function(x){try{localStorage.setItem(KS[x],JSON.stringify(VS[x]))}catch(e){}})}
+function today(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function setD(id,v){if(v){V()[id]=v;save();render()}}
+function toggle(id){if(V()[id])delete V()[id];else V()[id]=today();save();render()}
+function bkOut(){var t=document.getElementById("bk"),m=document.getElementById("bkm");t.value=JSON.stringify({v:2,visits:VS.f,mh:VS.m});t.select();var ng="上の文字をコピーして保管してください。";try{navigator.clipboard.writeText(t.value).then(function(){m.textContent="コピーしました。メモ帳などに貼り付けて保管してください。"},function(){m.textContent=ng})}catch(e){m.textContent=ng}}
+function bkMerge(dst,src){var n=0;if(!src||typeof src!=="object")return 0;Object.keys(src).forEach(function(k){if(/^\d+$/.test(k)&&/^\d{4}-\d{2}-\d{2}$/.test(String(src[k]))){dst[k]=src[k];n++}});return n}
+function bkIn(){var m=document.getElementById("bkm");try{var o=JSON.parse(document.getElementById("bk").value);if(!o||typeof o!=="object"||(!o.visits&&!o.mh))throw 0;var n=bkMerge(VS.f,o.visits)+bkMerge(VS.m,o.mh);saveAll();render();m.textContent=n+"件を読み込みました。"}catch(e){m.textContent="読み込めませんでした。書き出した文字をそのまま貼り付けてください。"}}
+var f=document.getElementById("flt"),q=document.getElementById("q"),st=document.getElementById("st");
+f.onchange=st.onchange=q.oninput=function(){render()};
+function setMode(x){mode=x;try{localStorage.setItem("fuke-mode",x)}catch(e){}f.value="";q.value="";st.value="";render()}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 function render(){
- var n=0,W={};
- S.forEach(function(s){
-  if(V[s.id])n++;
-  var w=W[s.c]=W[s.c]||[0,0];w[1]++;if(V[s.id])w[0]++;
+ var A=D(),Vv=V(),t=T[mode],n=0,W={};
+ if(document.documentElement)document.documentElement.setAttribute("data-mode",mode);
+ document.getElementById("tf").className=mode==="f"?"on":"";
+ document.getElementById("tm").className=mode==="m"?"on":"";
+ document.getElementById("ttl").textContent=t.h;
+ document.getElementById("info").textContent=t.i;
+ document.getElementById("src").textContent=t.s;
+ q.placeholder=t.ph;
+ A.forEach(function(s){
+  if(Vv[s.id])n++;
+  var w=W[s.c]=W[s.c]||[0,0];w[1]++;if(Vv[s.id])w[0]++;
  });
  var cur=f.value;f.innerHTML='<option value="">すべての地域</option>'+Object.keys(W).map(function(k){return '<option value="'+k+'">'+k+'（'+W[k][0]+'/'+W[k][1]+'）</option>'}).join("");f.value=cur;
- document.getElementById("cnt").textContent="達成 "+n+" / "+S.length+" 局";
- document.getElementById("bar").style.width=(n/S.length*100)+"%";
- var c=f.value;
- document.getElementById("list").innerHTML=S.filter(function(s){return (!c||s.c===c)&&(!q.value||s.n.indexOf(q.value)>=0)&&(st.value!=="y"||V[s.id])&&(st.value!=="n"||!V[s.id])}).map(function(s){
-  var d=V[s.id];
-  return '<div class="item'+(d?" done":"")+'" id="i'+s.id+'"><div class="name">'+s.n+'</div><div class="sub">'+(s.a.indexOf("調査中")<0?s.a:s.c)+'</div><div class="row"><button onclick="toggle('+s.id+')">'+(d?"✓ 訪問済み":"押印してきた")+'</button>'+(d?'<span class="sub">押印日</span><input type="date" value="'+d+'" onchange="setD('+s.id+',this.value)" style="width:auto;padding:6px;font-size:14px">':"")+'</div></div>';
+ document.getElementById("cnt").textContent="達成 "+n+" / "+A.length+" "+t.u;
+ document.getElementById("bar").style.width=(n/A.length*100)+"%";
+ var c=f.value,qq=q.value;
+ document.getElementById("list").innerHTML=A.filter(function(s){return (!c||s.c===c)&&(!qq||(s.n+(s.k||"")).indexOf(qq)>=0)&&(st.value!=="y"||Vv[s.id])&&(st.value!=="n"||!Vv[s.id])}).map(function(s){
+  var d=Vv[s.id],sub;
+  if(mode==="m")sub='<div class="sub">'+esc(s.k)+'</div><div class="sub">'+esc(s.a)+'</div><div class="sub">'+esc(s.t)+'</div>';
+  else sub='<div class="sub">'+(s.a.indexOf("調査中")<0?s.a:s.c)+'</div>';
+  return '<div class="item'+(d?" done":"")+(s.p?" paused":"")+'" id="i'+s.id+'"><div class="name">'+esc(s.n)+(s.p?'<span class="tag">配布休止中</span>':"")+'</div>'+sub+'<div class="row"><button onclick="toggle('+s.id+')">'+(d?"✓ 取得済み":t.b)+'</button>'+(d?'<span class="sub">'+t.d+'</span><input type="date" value="'+d+'" onchange="setD('+s.id+',this.value)" style="width:auto;padding:6px;font-size:14px">':"")+'</div></div>';
  }).join("");
 }
 render();
