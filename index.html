@@ -46,6 +46,7 @@ details summary{cursor:pointer}
 <div class="note" id="info"></div>
 <div class="prog"><span id="cnt"></span><div class="bar"><i id="bar"></i></div></div>
 <input id="q" type="search">
+<select id="pf" style="display:none"></select>
 <select id="flt"></select>
 <select id="st"><option value="">すべて</option><option value="n">未取得のみ</option><option value="y">取得済みのみ</option></select>
 <div id="list"></div>
@@ -180,12 +181,20 @@ var M=[
 {id:25,n:"道の駅 来夢とごうち",c:"山県郡安芸太田町",k:"安芸太田町 A001(第28弾)",a:"山県郡安芸太田町上殿632-2",t:"10:00〜18:00(12〜6月の平日は17:00まで) / 火曜・1/1休",p:0},
 {id:26,n:"東広島市(問合せ先)",c:"東広島市",k:"東広島市 C001(第29弾)",a:"東広島市西条栄町8-29",t:"配布場所はまだ未定です(問合せ先の住所)",p:1}
 ];
+var X=[["岡山県",[["岡山市","岡山市ももたろう観光センター"],["倉敷市","倉敷駅前観光案内所"],["倉敷市","児島駅観光案内所"],["倉敷市","旧柚木家住宅（西爽亭）"],["倉敷市","水島臨海鉄道 水島駅"],["倉敷市","ホテル グラン・ココエ倉敷"],["笠岡市","笠岡市カブトガニ博物館"],["瀬戸内市","備前おさふね刀剣の里"],["新庄村","咲蔵家（さくらや）"],["久米南町","道の駅くめなん"],["早島町","町民総合会館「ゆるびの舎」"],["鏡野町","鏡野町物産館 夢広場"],["津山市","津山観光センター"],["新見市","新見市観光協会"],["矢掛町","やかげ町家交流館"],["矢掛町","矢掛ビジターセンター問屋"],["真庭市","GREENable HIRUZEN"],["奈義町","多世代交流広場ナギテラス"],["美作市","湯郷温泉旅館協同組合"],["美作市","みまさかアリーナ"],["里庄町","里庄つばきの丘運動公園 管理棟"],["高梁市","武家屋敷 旧折井家"],["井原市","美星天文台"],["勝央町","勝央町役場"],["勝央町","おかやまファーマーズ・マーケット ノースヴィレッジ"],["浅口市","浅口市役所上下水道部下水道課（金光総合支所）"]]],["山口県",[["山口市","山口観光案内所"],["山口市","新山口駅観光交流センター"],["山口市","湯田温泉観光案内所"],["山口市","阿知須いぐらの館"],["山口市","道の駅あいお"],["下松市","下松市上下水道局 窓口"],["下松市","下松市観光案内所"],["下松市","下松スポーツ公園体育館管理事務所"],["防府市","防府市地域交流センター（アスピラート）"],["和木町","和木町蜂ヶ峯総合公園 管理棟"],["和木町","和木町蜂ヶ峯総合公園 Bee＋交流棟"],["下関市","長府観光会館"],["下関市","長府庭園"],["宇部市","ときわ湖水ホール"],["宇部市","宇部市新川ふれあいセンター"],["岩国市","岩国市観光交流所 本家 松がね"],["岩国市","岩国市英語交流センター PLAT ABC"],["岩国市","潮風公園みなとオアシスゆう"],["萩市","萩・明倫学舎"],["山陽小野田市","歴史民俗資料館"],["山陽小野田市","おのサンサッカーパーク"],["柳井市","柳井市観光協会"],["美祢市","秋芳洞案内所"],["周南市","周南市観光案内所 まちのポート"],["長門市","長門市観光案内所 YUKUTE"]]],["鳥取県",[["北栄町","北栄町役場 地域整備課"],["江府町","江府町役場 産業建設課"],["米子市","米子市観光センター"],["岩美町","道の駅 きなんせ岩美"],["鳥取市","まちパル鳥取"],["琴浦町","琴浦町役場 上下水道課 下水道係"],["倉吉市","赤瓦一号館"],["倉吉市","円形劇場くらよしフィギュアミュージアム"],["三朝町","三朝温泉観光商工センター"]]],["島根県",[["安来市","安来市観光協会（観光交流プラザ内）"],["浜田市","浜田市観光協会（JR浜田駅2階）"],["浜田市","旭温泉 あさひ荘"],["益田市","益田市観光協会"],["大田市","大田市観光協会（道の駅ごいせ仁摩内）"],["津和野町","津和野町観光協会"],["出雲市","日御碕ビジターセンター"],["出雲市","出雲観光案内所"],["吉賀町","道の駅むいかいち温泉 ゆらら"],["江津市","江津市観光協会"],["雲南市","うんなん観光案内所"],["松江市","松江堀川ふれあい広場 乗船場"],["西ノ島町","西ノ島町役場 環境整備課"]]]];
+var xid=27;X.forEach(function(g){g[1].forEach(function(r){M.push({id:xid++,n:r[1],c:r[0],k:"",a:g[0]+r[0],t:"",p:0,pr:g[0]})})});
+M.push({id:100,n:"瀬戸内市立美術館",c:"瀬戸内市",k:"",a:"岡山県瀬戸内市",t:"",p:1,pr:"岡山県"});
+M.push({id:101,n:"吉備中央町吉川支所（きびプラザ内）",c:"吉備中央町",k:"",a:"岡山県吉備中央町",t:"",p:0,pr:"岡山県"});
+var PAUSED=["備前おさふね刀剣の里","津山観光センター","宇部市新川ふれあいセンター","和木町蜂ヶ峯総合公園 Bee＋交流棟","江府町役場 産業建設課","道の駅 きなんせ岩美","三朝温泉観光商工センター","北栄町役場 地域整備課"];
+M.forEach(function(s){if(PAUSED.indexOf(s.n)>=0)s.p=1});
+M.forEach(function(s){s.pr=s.pr||"広島県"});
+function prefs(){var r=[];M.forEach(function(s){if(r.indexOf(s.pr)<0)r.push(s.pr)});return r}
 var KS={f:"fuke-hiroshima",m:"fuke-hiroshima-mh"},VS={f:{},m:{}},mode="f";
 try{if(localStorage.getItem("fuke-mode")==="m")mode="m"}catch(e){}
 ["f","m"].forEach(function(x){try{VS[x]=JSON.parse(localStorage.getItem(KS[x])||"{}")}catch(e){}
  Object.keys(VS[x]).forEach(function(k){var m=String(VS[x][k]).match(/^(\d+)\/(\d+)\/(\d+)$/);if(m)VS[x][k]=m[1]+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[3]).slice(-2)})});
 var T={f:{h:"収集図鑑",u:"局",ph:"局名で検索",b:"押印してきた",d:"押印日",i:"風景印:広島県内の局を登録しています(順次追加中)。",s:"データ出典:日本郵便「風景印」ページ。営業時間・押印可否は事前に窓口へご確認ください(窓口押印は平日9:00〜17:00の局が多いです)。"},
- m:{h:"収集図鑑",u:"枚",ph:"配布場所・カード名で検索",b:"もらってきた",d:"入手日",i:"マンホールカード:広島県内の配布場所を登録しています。配布時間や在庫は変わることがあります。",s:"データ出典:下水道広報プラットホーム(GKP)および各自治体の公開情報。行く前に、公式の最新情報(配布時間・在庫)をご確認ください。"}};
+ m:{h:"収集図鑑",u:"枚",ph:"配布場所・カード名で検索",b:"もらってきた",d:"入手日",i:"マンホールカード:中国5県の配布場所を登録しています。配布時間や在庫は変わることがあります。",s:"データ出典:下水道広報プラットホーム(GKP)および各自治体の公開情報、Manhole Quest(配布状況)。行く前に、公式の最新情報(配布時間・在庫)をご確認ください。"}};
 function D(){return mode==="m"?M:S}
 function V(){return VS[mode]}
 function save(){try{localStorage.setItem(KS[mode],JSON.stringify(VS[mode]))}catch(e){}}
@@ -196,9 +205,10 @@ function toggle(id){if(V()[id])delete V()[id];else V()[id]=today();save();render
 function bkOut(){var t=document.getElementById("bk"),m=document.getElementById("bkm");t.value=JSON.stringify({v:2,visits:VS.f,mh:VS.m});t.select();var ng="上の文字をコピーして保管してください。";try{navigator.clipboard.writeText(t.value).then(function(){m.textContent="コピーしました。メモ帳などに貼り付けて保管してください。"},function(){m.textContent=ng})}catch(e){m.textContent=ng}}
 function bkMerge(dst,src){var n=0;if(!src||typeof src!=="object")return 0;Object.keys(src).forEach(function(k){if(/^\d+$/.test(k)&&/^\d{4}-\d{2}-\d{2}$/.test(String(src[k]))){dst[k]=src[k];n++}});return n}
 function bkIn(){var m=document.getElementById("bkm");try{var o=JSON.parse(document.getElementById("bk").value);if(!o||typeof o!=="object"||(!o.visits&&!o.mh))throw 0;var n=bkMerge(VS.f,o.visits)+bkMerge(VS.m,o.mh);saveAll();render();m.textContent=n+"件を読み込みました。"}catch(e){m.textContent="読み込めませんでした。書き出した文字をそのまま貼り付けてください。"}}
-var f=document.getElementById("flt"),q=document.getElementById("q"),st=document.getElementById("st");
+var pf=document.getElementById("pf"),f=document.getElementById("flt"),q=document.getElementById("q"),st=document.getElementById("st");
 f.onchange=st.onchange=q.oninput=function(){render()};
-function setMode(x){mode=x;try{localStorage.setItem("fuke-mode",x)}catch(e){}f.value="";q.value="";st.value="";render()}
+pf.onchange=function(){f.value="";render()};
+function setMode(x){mode=x;try{localStorage.setItem("fuke-mode",x)}catch(e){}pf.value="";f.value="";q.value="";st.value="";render()}
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 function render(){
  var A=D(),Vv=V(),t=T[mode],n=0,W={};
@@ -209,19 +219,21 @@ function render(){
  document.getElementById("info").textContent=t.i;
  document.getElementById("src").textContent=t.s;
  q.placeholder=t.ph;
- A.forEach(function(s){
-  if(Vv[s.id])n++;
-  var w=W[s.c]=W[s.c]||[0,0];w[1]++;if(Vv[s.id])w[0]++;
- });
+ var showP=mode==="m"&&prefs().length>1;
+ pf.style.display=showP?"":"none";
+ if(showP){var pc=pf.value;pf.innerHTML='<option value="">すべての県</option>'+prefs().map(function(k){return '<option value="'+k+'">'+k+'</option>'}).join("");pf.value=pc}
+ var pv=showP?pf.value:"",P=pv?A.filter(function(s){return s.pr===pv}):A;
+ A.forEach(function(s){if(Vv[s.id])n++});
+ P.forEach(function(s){var w=W[s.c]=W[s.c]||[0,0];w[1]++;if(Vv[s.id])w[0]++});
  var cur=f.value;f.innerHTML='<option value="">すべての地域</option>'+Object.keys(W).map(function(k){return '<option value="'+k+'">'+k+'（'+W[k][0]+'/'+W[k][1]+'）</option>'}).join("");f.value=cur;
  document.getElementById("cnt").textContent="達成 "+n+" / "+A.length+" "+t.u;
  document.getElementById("bar").style.width=(n/A.length*100)+"%";
  var c=f.value,qq=q.value;
- document.getElementById("list").innerHTML=A.filter(function(s){return (!c||s.c===c)&&(!qq||(s.n+(s.k||"")).indexOf(qq)>=0)&&(st.value!=="y"||Vv[s.id])&&(st.value!=="n"||!Vv[s.id])}).map(function(s){
+ document.getElementById("list").innerHTML=P.filter(function(s){return (!c||s.c===c)&&(!qq||(s.n+(s.k||"")+(s.a||"")).indexOf(qq)>=0)&&(st.value!=="y"||Vv[s.id])&&(st.value!=="n"||!Vv[s.id])}).map(function(s){
   var d=Vv[s.id],sub;
-  if(mode==="m")sub='<div class="sub">'+esc(s.k)+'</div><div class="sub">'+esc(s.a)+'</div><div class="sub">'+esc(s.t)+'</div>';
+  if(mode==="m")sub=[s.k,s.a,s.t].filter(function(x){return x}).map(function(x){return '<div class="sub">'+esc(x)+'</div>'}).join("");
   else sub='<div class="sub">'+(s.a.indexOf("調査中")<0?s.a:s.c)+'</div>';
-  return '<div class="item'+(d?" done":"")+(s.p?" paused":"")+'" id="i'+s.id+'"><div class="name">'+esc(s.n)+(s.p?'<span class="tag">配布休止中</span>':"")+'</div>'+sub+'<div class="row"><button onclick="toggle('+s.id+')">'+(d?"✓ 取得済み":t.b)+'</button>'+(d?'<span class="sub">'+t.d+'</span><input type="date" value="'+d+'" onchange="setD('+s.id+',this.value)" style="width:auto;padding:6px;font-size:14px">':"")+'</div></div>';
+  return '<div class="item'+(d?" done":"")+(s.p?" paused":"")+'" id="i'+s.id+'"><div class="name">'+esc(s.n)+(s.p?'<span class="tag">配布休止中</span>':"")+'</div>'+sub+'<div class="row"><button onclick="toggle('+s.id+')">'+(d?"✓ 取得済み":t.b)+'</button>'+(d&&mode==="f"?'<span class="sub">'+t.d+'</span><input type="date" value="'+d+'" onchange="setD('+s.id+',this.value)" style="width:auto;padding:6px;font-size:14px">':"")+'</div></div>';
  }).join("");
 }
 render();
